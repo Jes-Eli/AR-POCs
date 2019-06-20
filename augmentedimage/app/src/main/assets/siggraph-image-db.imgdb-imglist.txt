@@ -1,0 +1,1 @@
+studio|C:\Users\Jessika\Desktop\SIGGRAPH_Project\sceneform-android-sdk-1.9.0\samples\augmentedimage\app\src\main\assets\studio.jpg
