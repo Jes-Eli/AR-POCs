@@ -33,7 +33,7 @@
       android:layout_gravity="center"
       android:scaleType="fitCenter"
       android:src="@drawable/fit_to_scan"
-      android:contentDescription="Find Studio Logo"
+      android:contentDescription="Find Studio Logo!"
       />
 
 </FrameLayout>
