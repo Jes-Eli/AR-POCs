@@ -1,25 +1,23 @@
 package com.google.ar.sceneform.samples.augmentedimage;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.Frame;
-import com.google.ar.core.HitResult;
 import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.FrameTime;
-import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
 import com.google.ar.sceneform.ux.ArFragment;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.support.v7.app.AlertDialog;
+import com.google.ar.sceneform.HitTestResult;
 
 /**
  * This application demonstrates using augmented images to place anchor nodes. app to include image
@@ -29,7 +27,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
   private ArFragment arFragment;
   private ImageView fitToScanView;
-  //private CanvasNode canvasNode = new CanvasNode(this);
   private GestureDetector gestureDetector;
 
   // Augmented image and its associated center pose anchor, keyed by the augmented image in
@@ -45,40 +42,35 @@ public class AugmentedImageActivity extends AppCompatActivity {
     fitToScanView = findViewById(R.id.image_view_fit_to_scan);
 
     arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
-
-    // Set up the tap listener
-    gestureDetector = new GestureDetector(this,
-            new GestureDetector.SimpleOnGestureListener(){
-              @Override
-              public boolean onDoubleTap(MotionEvent e){
-                Log.d("onDoubleTap", "TAP TAP!!!!");
-                return true;
-              }
-              @Override
-              public boolean onDown(MotionEvent e){
-                return true;
-              }
-            });
+    gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
+      @Override
+      public boolean onDoubleTap(MotionEvent e){
+        Log.d("onDoubleTap", "TAP TAP!!!!");
+        tapSwitchView(e);
+        return true;
+      }
+      @Override
+      public boolean onDown(MotionEvent e){
+        return true;
+      }
+    });
   }
 
-  //@TODO I added this
-  private void tapUpdateImage(MotionEvent motionEvent) {
-    //Frame frame = mFragment.getArSceneView().getArFrame();
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setMessage("HELLO THERE WORLD!")
-            .setTitle("TAP TAP TAP!");
-    /*
-    //make sure we are tracking before we process data.
-    if (selectedId == -1 || motionEvent == null || frame == null ||
-            frame.getCamera().getTrackingState() != TrackingState.TRACKING)
-      return;
-
-    canvas2View = ViewRenderable.builder().setView(context, R.layout.canvas2)
-            .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
-            .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
-            .build();*/
+  private void tapSwitchView(MotionEvent motionEvent) {
+    Log.d("tapSwitchView", "DEL current node SET new node");
+    Frame frame = arFragment.getArSceneView().getArFrame();
+    Collection<AugmentedImage> updatedAugmentedImages = frame.getUpdatedTrackables(AugmentedImage.class);
+    for (AugmentedImage augmentedImage : updatedAugmentedImages) {
+      switch (augmentedImage.getTrackingState()) {
+        case TRACKING:
+          AugmentedImageNode nodeVal = augmentedImageMap.get(augmentedImage);
+          if(nodeVal.getIsCurrentViewDisplayed()){
+            Log.d("tapSwitchView", "Removing Child Node");
+            arFragment.getArSceneView().getScene().removeChild(nodeVal);
+          }
+      }
+    }
   }
-
 
   @Override
   protected void onResume() {
@@ -120,7 +112,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
           if (!augmentedImageMap.containsKey(augmentedImage)) {
             AugmentedImageNode node = new AugmentedImageNode(this);
             node.setImage(augmentedImage);
-            // Set up the tap listener for node
+            node.setIsCurrentViewDisplayed(true);
             node.setOnTouchListener(
                     (HitTestResult r, MotionEvent event) -> gestureDetector.onTouchEvent(event));
             augmentedImageMap.put(augmentedImage, node);
@@ -131,6 +123,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
             builder.setPositiveButton("Got It!", null);
             AlertDialog dialog = builder.create();
             dialog.show();
+
           }
           break;
 

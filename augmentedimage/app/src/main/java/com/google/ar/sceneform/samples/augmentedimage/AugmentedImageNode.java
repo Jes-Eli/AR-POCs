@@ -17,18 +17,15 @@
 package com.google.ar.sceneform.samples.augmentedimage;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
-import com.google.ar.sceneform.rendering.ViewSizer;
-
 import java.util.concurrent.CompletableFuture;
+
 
 /**
  * Node for rendering an augmented image. The image is framed by placing the virtual picture frame
@@ -41,20 +38,22 @@ public class AugmentedImageNode extends AnchorNode {
 
   // The augmented image represented by this node.
   private AugmentedImage image;
+  //private GestureDetector gestureDetector;
 
-  // Models of the 4 corners.  We use completable futures here to simplify
+  // We use completable futures here to simplify
   // the error handling and asynchronous loading.  The loading is started with the
   // first construction of an instance, and then used when the image is set.
   private static CompletableFuture<ViewRenderable> canvasView;
+  private static boolean isCurrentViewDisplayed;
 
   public AugmentedImageNode(Context context) {
-    // Upon construction, start loading the models for the corners of the frame.
-    if (canvasView == null) {
-      //ViewSizer canvasViewSize = new ViewSizer()
-      canvasView = ViewRenderable.builder().setView(context, R.layout.canvas)
-                   .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
-                   .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
-                   .build();
+      isCurrentViewDisplayed = false;
+      // Upon construction, start loading the models
+      if (canvasView == null) {
+          canvasView = ViewRenderable.builder().setView(context, R.layout.canvas)
+                  .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
+                  .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
+                  .build();
     }
   }
 
@@ -76,20 +75,23 @@ public class AugmentedImageNode extends AnchorNode {
                         return null;
                       });
     }
-
     // Set the anchor based on the center of the image.
     setAnchor(image.createAnchor(image.getCenterPose()));
 
     // Make the node
-    Node canvasNode;
-    canvasNode = new Node();
+    Node canvasNode = new Node();
     canvasNode.setParent(this);
     canvasNode.setWorldRotation(Quaternion.identity());
     canvasNode.setLocalScale(new Vector3(image.getExtentX(), image.getExtentZ(), image.getExtentX()));
     canvasNode.setRenderable(canvasView.getNow(null));
   }
-
   public AugmentedImage getImage() {
-    return image;
+      return image;
+  }
+  public boolean getIsCurrentViewDisplayed(){
+      return isCurrentViewDisplayed;
+  }
+  public void setIsCurrentViewDisplayed(boolean b){
+      isCurrentViewDisplayed = b;
   }
 }
