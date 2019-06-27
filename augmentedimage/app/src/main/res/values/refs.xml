@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <drawable name="imageView3">@drawable/classicsunday</drawable>
+    <drawable name="image_view2">@drawable/starrynight</drawable>
+    <drawable name="image_view3">@drawable/asundayafternoon</drawable>
 </resources>

@@ -13,10 +13,18 @@ import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
 import com.google.ar.sceneform.ux.ArFragment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import android.support.v7.app.AlertDialog;
+import android.widget.LinearLayout;
+import com.google.ar.sceneform.rendering.ViewRenderable;
+import java.util.concurrent.CompletableFuture;
+
+
 import com.google.ar.sceneform.HitTestResult;
 
 /**
@@ -28,31 +36,42 @@ public class AugmentedImageActivity extends AppCompatActivity {
   private ArFragment arFragment;
   private ImageView fitToScanView;
   private GestureDetector gestureDetector;
+  private Integer linearLayoutOptionsIndex;
 
   // Augmented image and its associated center pose anchor, keyed by the augmented image in
   // the database.
   private final Map<AugmentedImage, AugmentedImageNode> augmentedImageMap = new HashMap<>();
+  //private final ArrayList<Integer> linearLayoutOptions = new ArrayList<>(
+  //        Arrays.asList(R.layout.canvas, R.layout.canvas));
+    private final Integer[] linearLayoutOptions = new Integer[3];
 
-  @Override
+
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+      Log.d("onCreate", "Creating a new arFragment");
+      linearLayoutOptionsIndex = 0;
+      linearLayoutOptions[0] = R.layout.canvas;
+      linearLayoutOptions[1] = R.layout.canvas2;
+      linearLayoutOptions[2] = R.layout.canvas3;
 
-    arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
-    fitToScanView = findViewById(R.id.image_view_fit_to_scan);
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.activity_main);
+      arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+      fitToScanView = findViewById(R.id.image_view_fit_to_scan);
 
-    arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
-    gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
-      @Override
-      public boolean onDoubleTap(MotionEvent e){
-        Log.d("onDoubleTap", "TAP TAP!!!!");
-        tapSwitchView(e);
-        return true;
-      }
-      @Override
-      public boolean onDown(MotionEvent e){
-        return true;
-      }
+      arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
+      gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+          @Override
+          public boolean onDoubleTap(MotionEvent e) {
+              Log.d("onDoubleTap", "TAP TAP!!!!");
+              tapSwitchView(e);
+              return true;
+          }
+
+          @Override
+          public boolean onDown(MotionEvent e) {
+              return true;
+          }
     });
   }
 
@@ -64,12 +83,33 @@ public class AugmentedImageActivity extends AppCompatActivity {
       switch (augmentedImage.getTrackingState()) {
         case TRACKING:
           AugmentedImageNode nodeVal = augmentedImageMap.get(augmentedImage);
-          if(nodeVal.getIsCurrentViewDisplayed()){
-            Log.d("tapSwitchView", "Removing Child Node");
-            arFragment.getArSceneView().getScene().removeChild(nodeVal);
+          if(nodeVal.getIsCurrentViewDisplayed()) {
+              Log.d("tapSwitchView", "Removing Child Node " + Integer.toString(linearLayoutOptionsIndex));
+              nodeVal.setIsCurrentViewDisplayed(false);
+              arFragment.getArSceneView().getScene().removeChild(nodeVal);
+              nodeVal.deleteCanvasView();
+              linearLayoutOptionsIndex = 1;
+              //AugmentedImageNode newNode = createAugmentedImageNode(augmentedImage);
+              AugmentedImageNode node1 = new AugmentedImageNode(
+                      this, R.layout.canvas2);
+              node1.setImage(augmentedImage);
+              node1.setIsCurrentViewDisplayed(true);
+              augmentedImageMap.put(augmentedImage, node1);
+              arFragment.getArSceneView().getScene().addChild(node1);
           }
       }
     }
+  }
+
+  private AugmentedImageNode createAugmentedImageNode(AugmentedImage augmentedImage){
+      Log.d("createAugmentedImageNode", "Creating Node " + Integer.toString(linearLayoutOptionsIndex));
+      AugmentedImageNode node = new AugmentedImageNode(
+              this, linearLayoutOptions[linearLayoutOptionsIndex]);
+      node.setImage(augmentedImage);
+      node.setIsCurrentViewDisplayed(true);
+      node.setOnTouchListener(
+              (HitTestResult r, MotionEvent event) -> gestureDetector.onTouchEvent(event));
+      return node;
   }
 
   @Override
@@ -110,11 +150,15 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
           // Create a new anchor for newly found images.
           if (!augmentedImageMap.containsKey(augmentedImage)) {
-            AugmentedImageNode node = new AugmentedImageNode(this);
+            /*AugmentedImageNode node = new AugmentedImageNode(
+                    this, linearLayoutOptions[linearLayoutOptionsIndex]);
             node.setImage(augmentedImage);
             node.setIsCurrentViewDisplayed(true);
             node.setOnTouchListener(
                     (HitTestResult r, MotionEvent event) -> gestureDetector.onTouchEvent(event));
+            augmentedImageMap.put(augmentedImage, node);
+            arFragment.getArSceneView().getScene().addChild(node);*/
+            AugmentedImageNode node = createAugmentedImageNode(augmentedImage);
             augmentedImageMap.put(augmentedImage, node);
             arFragment.getArSceneView().getScene().addChild(node);
             // Create Alert Message

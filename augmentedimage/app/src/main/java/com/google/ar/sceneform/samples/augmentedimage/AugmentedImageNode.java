@@ -18,6 +18,9 @@ package com.google.ar.sceneform.samples.augmentedimage;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
@@ -38,7 +41,6 @@ public class AugmentedImageNode extends AnchorNode {
 
   // The augmented image represented by this node.
   private AugmentedImage image;
-  //private GestureDetector gestureDetector;
 
   // We use completable futures here to simplify
   // the error handling and asynchronous loading.  The loading is started with the
@@ -46,11 +48,13 @@ public class AugmentedImageNode extends AnchorNode {
   private static CompletableFuture<ViewRenderable> canvasView;
   private static boolean isCurrentViewDisplayed;
 
-  public AugmentedImageNode(Context context) {
+  public AugmentedImageNode(Context context, Integer canvasReference) {
       isCurrentViewDisplayed = false;
       // Upon construction, start loading the models
+      Log.e("AugmentedImageNode", "Creating AugmentedImageNode " + Integer.toString(canvasReference));
       if (canvasView == null) {
-          canvasView = ViewRenderable.builder().setView(context, R.layout.canvas)
+          Log.e("AugmentedImageNode", "Building ViewRenderable for Node " + Integer.toString(canvasReference));
+          canvasView = ViewRenderable.builder().setView(context, canvasReference)
                   .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
                   .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
                   .build();
@@ -93,5 +97,8 @@ public class AugmentedImageNode extends AnchorNode {
   }
   public void setIsCurrentViewDisplayed(boolean b){
       isCurrentViewDisplayed = b;
+  }
+  public void deleteCanvasView(){
+      canvasView = null;
   }
 }
