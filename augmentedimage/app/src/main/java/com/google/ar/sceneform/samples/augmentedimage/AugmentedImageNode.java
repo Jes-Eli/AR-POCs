@@ -45,19 +45,22 @@ public class AugmentedImageNode extends AnchorNode {
   // We use completable futures here to simplify
   // the error handling and asynchronous loading.  The loading is started with the
   // first construction of an instance, and then used when the image is set.
-  private static CompletableFuture<ViewRenderable> canvasView;
-  private static boolean isCurrentViewDisplayed;
+  private CompletableFuture<ViewRenderable> canvasView;
+  private boolean isCurrentViewDisplayed;
+  private boolean prevSet;
 
   public AugmentedImageNode(Context context, Integer canvasReference) {
       isCurrentViewDisplayed = false;
+      prevSet = false;
       // Upon construction, start loading the models
-      Log.e("AugmentedImageNode", "Creating AugmentedImageNode " + Integer.toString(canvasReference));
+      Log.e("AugmentedImageNode", "Creating AugmentedImageNode " + canvasReference);
       if (canvasView == null) {
-          Log.e("AugmentedImageNode", "Building ViewRenderable for Node " + Integer.toString(canvasReference));
+          Log.e("AugmentedImageNode", "Building ViewRenderable for Node " + canvasReference);
           canvasView = ViewRenderable.builder().setView(context, canvasReference)
                   .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
                   .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
                   .build();
+          Log.e("AugmentedImageNode", "YYEEET BOII" + canvasReference);
     }
   }
 
@@ -101,4 +104,6 @@ public class AugmentedImageNode extends AnchorNode {
   public void deleteCanvasView(){
       canvasView = null;
   }
+  public void updatePrevSet(boolean b){prevSet=b;}
+  public boolean getPrevSet(){return prevSet;}
 }

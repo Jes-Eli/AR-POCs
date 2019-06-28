@@ -43,23 +43,28 @@ public class AugmentedImageActivity extends AppCompatActivity {
   private final Map<AugmentedImage, AugmentedImageNode> augmentedImageMap = new HashMap<>();
   //private final ArrayList<Integer> linearLayoutOptions = new ArrayList<>(
   //        Arrays.asList(R.layout.canvas, R.layout.canvas));
-    private final Integer[] linearLayoutOptions = new Integer[3];
+  //private final Integer[] linearLayoutOptions = new Integer[3];
+  private final AugmentedImageNode[] linearLayoutOptions = new AugmentedImageNode[3];
 
-
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
       Log.d("onCreate", "Creating a new arFragment");
       linearLayoutOptionsIndex = 0;
-      linearLayoutOptions[0] = R.layout.canvas;
-      linearLayoutOptions[1] = R.layout.canvas2;
-      linearLayoutOptions[2] = R.layout.canvas3;
+      //linearLayoutOptions[0] = R.layout.canvas;
+      //linearLayoutOptions[1] = R.layout.canvas2;
+      //linearLayoutOptions[2] = R.layout.canvas3;
+      //Log.d("onCreate", "Creating a new arFragment222");
+      //Log.d("onCreate", "Creating a new arFragment333");
 
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
       arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
       fitToScanView = findViewById(R.id.image_view_fit_to_scan);
-
       arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
+      linearLayoutOptions[0] = new AugmentedImageNode(this, R.layout.canvas);
+      linearLayoutOptions[1] = new AugmentedImageNode(this, R.layout.canvas2);
+      linearLayoutOptions[2] = new AugmentedImageNode(this, R.layout.canvas3);
+
       gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
           @Override
           public boolean onDoubleTap(MotionEvent e) {
@@ -76,37 +81,40 @@ public class AugmentedImageActivity extends AppCompatActivity {
   }
 
   private void tapSwitchView(MotionEvent motionEvent) {
-    Log.d("tapSwitchView", "DEL current node SET new node");
+    Log.d("tapSwitchView", "REMOVE current node SET new node");
     Frame frame = arFragment.getArSceneView().getArFrame();
     Collection<AugmentedImage> updatedAugmentedImages = frame.getUpdatedTrackables(AugmentedImage.class);
-    for (AugmentedImage augmentedImage : updatedAugmentedImages) {
-      switch (augmentedImage.getTrackingState()) {
+    for (AugmentedImage augmentedImageKey : updatedAugmentedImages) {
+      Log.d("tapSwitchView", "augmentedImageKey - " + linearLayoutOptionsIndex);
+      switch (augmentedImageKey.getTrackingState()) {
         case TRACKING:
-          AugmentedImageNode nodeVal = augmentedImageMap.get(augmentedImage);
+          Log.d("tapSwitchView", "TRACKING: " + linearLayoutOptionsIndex);
+          AugmentedImageNode nodeVal = augmentedImageMap.get(augmentedImageKey);
           if(nodeVal.getIsCurrentViewDisplayed()) {
-              Log.d("tapSwitchView", "Removing Child Node " + Integer.toString(linearLayoutOptionsIndex));
+              Log.d("tapSwitchView", "Removing Child Node " + linearLayoutOptionsIndex);
               nodeVal.setIsCurrentViewDisplayed(false);
               arFragment.getArSceneView().getScene().removeChild(nodeVal);
-              nodeVal.deleteCanvasView();
-              linearLayoutOptionsIndex = 1;
-              //AugmentedImageNode newNode = createAugmentedImageNode(augmentedImage);
-              AugmentedImageNode node1 = new AugmentedImageNode(
-                      this, R.layout.canvas2);
-              node1.setImage(augmentedImage);
-              node1.setIsCurrentViewDisplayed(true);
-              augmentedImageMap.put(augmentedImage, node1);
-              arFragment.getArSceneView().getScene().addChild(node1);
+              linearLayoutOptionsIndex++;
+              if (linearLayoutOptionsIndex == linearLayoutOptions.length){linearLayoutOptionsIndex = 0;}
+              // only set if setting for the first time
+              if(linearLayoutOptions[linearLayoutOptionsIndex].getPrevSet() == false){
+                  Log.d("tapSwitchView", "Node to be set for the first time: " + linearLayoutOptionsIndex);
+                  linearLayoutOptions[linearLayoutOptionsIndex] = setAugmentedImageNode(
+                          linearLayoutOptions[linearLayoutOptionsIndex], augmentedImageKey);
+              }
+              Log.d("tapSwitchView", "Updating Image Map: " + linearLayoutOptionsIndex);
+              linearLayoutOptions[linearLayoutOptionsIndex].setIsCurrentViewDisplayed(true);
+              augmentedImageMap.put(augmentedImageKey, linearLayoutOptions[linearLayoutOptionsIndex]);
+              arFragment.getArSceneView().getScene().addChild(linearLayoutOptions[linearLayoutOptionsIndex]);
           }
       }
     }
   }
 
-  private AugmentedImageNode createAugmentedImageNode(AugmentedImage augmentedImage){
-      Log.d("createAugmentedImageNode", "Creating Node " + Integer.toString(linearLayoutOptionsIndex));
-      AugmentedImageNode node = new AugmentedImageNode(
-              this, linearLayoutOptions[linearLayoutOptionsIndex]);
+  private AugmentedImageNode setAugmentedImageNode(AugmentedImageNode node, AugmentedImage augmentedImage){
+      Log.d("setAugmentedImageNode", "Setting Node Properties " + linearLayoutOptionsIndex);
+      node.updatePrevSet(true);
       node.setImage(augmentedImage);
-      node.setIsCurrentViewDisplayed(true);
       node.setOnTouchListener(
               (HitTestResult r, MotionEvent event) -> gestureDetector.onTouchEvent(event));
       return node;
@@ -158,9 +166,11 @@ public class AugmentedImageActivity extends AppCompatActivity {
                     (HitTestResult r, MotionEvent event) -> gestureDetector.onTouchEvent(event));
             augmentedImageMap.put(augmentedImage, node);
             arFragment.getArSceneView().getScene().addChild(node);*/
-            AugmentedImageNode node = createAugmentedImageNode(augmentedImage);
-            augmentedImageMap.put(augmentedImage, node);
-            arFragment.getArSceneView().getScene().addChild(node);
+            linearLayoutOptions[linearLayoutOptionsIndex] = setAugmentedImageNode(
+                    linearLayoutOptions[linearLayoutOptionsIndex], augmentedImage);
+            linearLayoutOptions[linearLayoutOptionsIndex].setIsCurrentViewDisplayed(true);
+            augmentedImageMap.put(augmentedImage, linearLayoutOptions[linearLayoutOptionsIndex]);
+            arFragment.getArSceneView().getScene().addChild(linearLayoutOptions[linearLayoutOptionsIndex]);
             // Create Alert Message
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("You can double tap on the image to change it.").setTitle("Hint!");
