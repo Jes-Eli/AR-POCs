@@ -3,6 +3,7 @@ package com.google.ar.sceneform.samples.augmentedimage;
 import android.content.Context;
 import android.view.MotionEvent;
 import android.widget.TextView;
+
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
@@ -17,11 +18,11 @@ import com.google.ar.sceneform.rendering.ViewRenderable;
  * <p>The planet creates two child nodes when it is activated:
  *
  * <ul>
- *   <li>The visual of the planet, rotates along it's own axis and renders the planet.
- *   <li>An info card, renders an Android View that displays the name of the planerendt. This can be
- *       toggled on and off.
+ * <li>The visual of the planet, rotates along it's own axis and renders the planet.
+ * <li>An info card, renders an Android View that displays the name of the planerendt. This can be
+ * toggled on and off.
  * </ul>
- *
+ * <p>
  * The planet is rendered by a child instead of this node so that the spinning of the planet doesn't
  * make the info card spin as well.
  */

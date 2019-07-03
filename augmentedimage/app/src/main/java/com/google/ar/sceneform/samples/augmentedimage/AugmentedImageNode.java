@@ -19,6 +19,7 @@ package com.google.ar.sceneform.samples.augmentedimage;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
@@ -37,21 +38,21 @@ import java.util.concurrent.CompletableFuture;
 @SuppressWarnings({"AndroidApiChecker"})
 public class AugmentedImageNode extends AnchorNode {
 
-  private static final String TAG = "AugmentedImageNode";
+    private static final String TAG = "AugmentedImageNode";
 
-  // The augmented image represented by this node.
-  private AugmentedImage image;
+    // The augmented image represented by this node.
+    private AugmentedImage image;
 
-  // Models of the 4 corners.  We use completable futures here to simplify
-  // the error handling and asynchronous loading.  The loading is started with the
-  // first construction of an instance, and then used when the image is set.
-  private static CompletableFuture<ModelRenderable> ulCorner;
-  private static CompletableFuture<ModelRenderable> urCorner;
-  private static CompletableFuture<ModelRenderable> lrCorner;
-  private static CompletableFuture<ModelRenderable> llCorner;
-  private static CompletableFuture<ViewRenderable> canvasView;
+    // Models of the 4 corners.  We use completable futures here to simplify
+    // the error handling and asynchronous loading.  The loading is started with the
+    // first construction of an instance, and then used when the image is set.
+    private static CompletableFuture<ModelRenderable> ulCorner;
+    private static CompletableFuture<ModelRenderable> urCorner;
+    private static CompletableFuture<ModelRenderable> lrCorner;
+    private static CompletableFuture<ModelRenderable> llCorner;
+    private static CompletableFuture<ViewRenderable> canvasView;
 
-  public AugmentedImageNode(Context context) {
+    public AugmentedImageNode(Context context) {
     /*// Upon construction, start loading the models for the corners of the frame.
     if (ulCorner == null) {
       ulCorner =
@@ -72,24 +73,24 @@ public class AugmentedImageNode extends AnchorNode {
                       .build();
     }*/
 
-    if (canvasView == null) {
-      //ViewSizer canvasViewSize = new ViewSizer()
-      canvasView = ViewRenderable.builder().setView(context, R.layout.canvas)
-                   .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
-                   .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
-                   .build();
+        if (canvasView == null) {
+            //ViewSizer canvasViewSize = new ViewSizer()
+            canvasView = ViewRenderable.builder().setView(context, R.layout.canvas)
+                    .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
+                    .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
+                    .build();
+        }
     }
-  }
 
-  /**
-   * Called when the AugmentedImage is detected and should be rendered. A Sceneform node tree is
-   * created based on an Anchor created from the image. The corners are then positioned based on the
-   * extents of the image. There is no need to worry about world coordinates since everything is
-   * relative to the center of the image, which is the parent node of the corners.
-   */
-  @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
-  public void setImage(AugmentedImage image) {
-    this.image = image;
+    /**
+     * Called when the AugmentedImage is detected and should be rendered. A Sceneform node tree is
+     * created based on an Anchor created from the image. The corners are then positioned based on the
+     * extents of the image. There is no need to worry about world coordinates since everything is
+     * relative to the center of the image, which is the parent node of the corners.
+     */
+    @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
+    public void setImage(AugmentedImage image) {
+        this.image = image;
 
     /*// If any of the models are not loaded, then recurse when all are loaded.
     if (!ulCorner.isDone() || !urCorner.isDone() || !llCorner.isDone() || !lrCorner.isDone()) {
@@ -102,28 +103,28 @@ public class AugmentedImageNode extends AnchorNode {
                       });
     }*/
 
-    if (!canvasView.isDone()) {
-      CompletableFuture.allOf(canvasView)
-              .thenAccept((Void aVoid) -> setImage(image))
-              .exceptionally(
-                      throwable -> {
-                        Log.e(TAG, "Exception loading", throwable);
-                        return null;
-                      });
-    }
+        if (!canvasView.isDone()) {
+            CompletableFuture.allOf(canvasView)
+                    .thenAccept((Void aVoid) -> setImage(image))
+                    .exceptionally(
+                            throwable -> {
+                                Log.e(TAG, "Exception loading", throwable);
+                                return null;
+                            });
+        }
 
-    // Set the anchor based on the center of the image.
-    setAnchor(image.createAnchor(image.getCenterPose()));
+        // Set the anchor based on the center of the image.
+        setAnchor(image.createAnchor(image.getCenterPose()));
 
-    // Make the 4 corner nodes.
-    Node canvasNode;
-    //Node cornerNode;
+        // Make the 4 corner nodes.
+        Node canvasNode;
+        //Node cornerNode;
 
-    canvasNode = new Node();
-    canvasNode.setParent(this);
-    canvasNode.setWorldRotation(Quaternion.identity());
-    canvasNode.setLocalScale(new Vector3(image.getExtentX(), image.getExtentZ(), image.getExtentX()));
-    canvasNode.setRenderable(canvasView.getNow(null));
+        canvasNode = new Node();
+        canvasNode.setParent(this);
+        canvasNode.setWorldRotation(Quaternion.identity());
+        canvasNode.setLocalScale(new Vector3(image.getExtentX(), image.getExtentZ(), image.getExtentX()));
+        canvasNode.setRenderable(canvasView.getNow(null));
 
     /*// Upper left corner.
     localPosition.set(-0.5f * image.getExtentX(), 0.0f, -0.5f * image.getExtentZ());
@@ -152,9 +153,9 @@ public class AugmentedImageNode extends AnchorNode {
     cornerNode.setParent(this);
     cornerNode.setLocalPosition(localPosition);
     cornerNode.setRenderable(llCorner.getNow(null));*/
-  }
+    }
 
-  public AugmentedImage getImage() {
-    return image;
-  }
+    public AugmentedImage getImage() {
+        return image;
+    }
 }
