@@ -54,6 +54,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private final Map<AugmentedImage, AugmentedImageNode> augmentedImageMap = new HashMap<>();
     private FloatingActionButton photoFab, emailFab, facebookFab, downloadFab, exitFab;
     private static ArSceneView view;
+    private boolean isViewPaused = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +113,10 @@ public class AugmentedImageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (isViewPaused) {
+            setFabVisibilityOnExit();
+            isViewPaused = false;
+        }
         if (augmentedImageMap.isEmpty()) {
             fitToScanView.setVisibility(View.VISIBLE);
         }
@@ -187,6 +192,8 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private void takePhoto() throws CameraNotAvailableException {
         view = arFragment.getArSceneView();
         view.pause();
+        isViewPaused = true;
+        fitToScanView.setVisibility(View.GONE);
         setFabVisibilityOnTakePhoto();
     }
 
@@ -348,6 +355,10 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private void exit() throws CameraNotAvailableException {
         try {
             view.resume();
+            isViewPaused = false;
+            if (augmentedImageMap.isEmpty()) {
+                fitToScanView.setVisibility(View.VISIBLE);
+            }
             setFabVisibilityOnExit();
         } catch (CameraNotAvailableException e) {
             throw e;
@@ -370,50 +381,3 @@ public class AugmentedImageActivity extends AppCompatActivity {
         exitFab.hide();
     }
 }
-
-
-/*
-switch (buttonClicked) {
-                        case "DOWNLOAD":
-                            // download photo to device
-                            Intent downloadIntent = new Intent(Intent.ACTION_VIEW, photoURI);
-                            downloadIntent.setDataAndType(photoURI, "image/*");
-                            downloadIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            startActivity(downloadIntent);
-                        case "EMAIL":
-                            // send email
-                            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                            emailIntent.setType("message/rfc822");
-                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your ARt Gallery photo from SIGGRAPH 2019");
-                            emailIntent.putExtra(Intent.EXTRA_TEXT, "Thank you for checking out the ARt Gallery at SIGGRAPH Studio! ");
-                            emailIntent.putExtra(Intent.EXTRA_STREAM, photoURI);
-                            try {
-                                startActivity(Intent.createChooser(emailIntent, "Send email"));
-                            } catch (android.content.ActivityNotFoundException ex) {
-                                Toast.makeText(AugmentedImageActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-                            }
-                        case "FACEBOOK":
-                            Intent facebookIntent = new Intent(Intent.ACTION_VIEW, photoURI);
-                            facebookIntent.setDataAndType(photoURI, "image/*");
-                            facebookIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            startActivity(facebookIntent);
-
-                            SharePhoto photo = new SharePhoto.Builder().setBitmap(bitmap).build();
-                            SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo)
-                                    .setShareHashtag(new ShareHashtag.Builder().setHashtag("#SiggraphStudioARtGallery2019").build())
-                                    .build();
-                            ShareDialog dialog = new ShareDialog(this);
-                            if (dialog.canShow(SharePhotoContent.class)){
-                                dialog.show(content);
-                            }
-                            else{
-                                Toast.makeText(AugmentedImageActivity.this, "Cannot share photo", Toast.LENGTH_SHORT).show();
-                            }
-                        case "EXIT":
-                            try {
-                                view.resume();
-                                setFabVisibilityOnExit();;
-                            } catch (CameraNotAvailableException e) {
-                            }
-                    }
- */
