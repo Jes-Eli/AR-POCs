@@ -18,9 +18,6 @@ package com.google.ar.sceneform.samples.augmentedimage;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;

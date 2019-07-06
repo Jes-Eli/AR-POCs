@@ -41,20 +41,12 @@ public class AugmentedImageActivity extends AppCompatActivity {
   // Augmented image and its associated center pose anchor, keyed by the augmented image in
   // the database.
   private final Map<AugmentedImage, AugmentedImageNode> augmentedImageMap = new HashMap<>();
-  //private final ArrayList<Integer> linearLayoutOptions = new ArrayList<>(
-  //        Arrays.asList(R.layout.canvas, R.layout.canvas));
-  //private final Integer[] linearLayoutOptions = new Integer[3];
-  private final AugmentedImageNode[] linearLayoutOptions = new AugmentedImageNode[3];
+  private final AugmentedImageNode[] linearLayoutOptions = new AugmentedImageNode[4];
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
       Log.d("onCreate", "Creating a new arFragment");
       linearLayoutOptionsIndex = 0;
-      //linearLayoutOptions[0] = R.layout.canvas;
-      //linearLayoutOptions[1] = R.layout.canvas2;
-      //linearLayoutOptions[2] = R.layout.canvas3;
-      //Log.d("onCreate", "Creating a new arFragment222");
-      //Log.d("onCreate", "Creating a new arFragment333");
 
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
@@ -64,6 +56,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
       linearLayoutOptions[0] = new AugmentedImageNode(this, R.layout.canvas);
       linearLayoutOptions[1] = new AugmentedImageNode(this, R.layout.canvas2);
       linearLayoutOptions[2] = new AugmentedImageNode(this, R.layout.canvas3);
+      linearLayoutOptions[3] = new AugmentedImageNode(this, R.layout.portrait);
 
       gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
           @Override
@@ -158,14 +151,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
           // Create a new anchor for newly found images.
           if (!augmentedImageMap.containsKey(augmentedImage)) {
-            /*AugmentedImageNode node = new AugmentedImageNode(
-                    this, linearLayoutOptions[linearLayoutOptionsIndex]);
-            node.setImage(augmentedImage);
-            node.setIsCurrentViewDisplayed(true);
-            node.setOnTouchListener(
-                    (HitTestResult r, MotionEvent event) -> gestureDetector.onTouchEvent(event));
-            augmentedImageMap.put(augmentedImage, node);
-            arFragment.getArSceneView().getScene().addChild(node);*/
             linearLayoutOptions[linearLayoutOptionsIndex] = setAugmentedImageNode(
                     linearLayoutOptions[linearLayoutOptionsIndex], augmentedImage);
             linearLayoutOptions[linearLayoutOptionsIndex].setIsCurrentViewDisplayed(true);
@@ -177,7 +162,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
             builder.setPositiveButton("Got It!", null);
             AlertDialog dialog = builder.create();
             dialog.show();
-
           }
           break;
 

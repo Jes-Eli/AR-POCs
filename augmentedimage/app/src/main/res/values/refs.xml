@@ -2,4 +2,6 @@
 <resources>
     <drawable name="image_view2">@drawable/starrynight</drawable>
     <drawable name="image_view3">@drawable/asundayafternoon</drawable>
+    <drawable name="canvas4">@drawable/starry_night</drawable>
+    <drawable name="portrait_view">@drawable/mona_lisa</drawable>
 </resources>
