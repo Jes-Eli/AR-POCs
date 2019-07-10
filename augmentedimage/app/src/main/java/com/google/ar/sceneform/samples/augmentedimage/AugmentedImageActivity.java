@@ -61,7 +61,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
   private ImageView fitToScanView;
   private GestureDetector gestureDetector;
   private Integer linearLayoutOptionsIndex;
-  private final AugmentedImageNode[] linearLayoutOptions = new AugmentedImageNode[4];
+  private final AugmentedImageNode[] linearLayoutOptions = new AugmentedImageNode[9];
 
   // Augmented image and its associated center pose anchor, keyed by the augmented image in
   // the database.
@@ -85,8 +85,14 @@ public class AugmentedImageActivity extends AppCompatActivity {
       linearLayoutOptions[1] = new AugmentedImageNode(this, R.layout.canvas2);
       linearLayoutOptions[2] = new AugmentedImageNode(this, R.layout.canvas3);
       linearLayoutOptions[3] = new AugmentedImageNode(this, R.layout.portrait);
+      linearLayoutOptions[4] = new AugmentedImageNode(this, R.layout.americangothic);
+      linearLayoutOptions[5] = new AugmentedImageNode(this, R.layout.thescream);
+      linearLayoutOptions[6] = new AugmentedImageNode(this, R.layout.shaydpixel);
+      linearLayoutOptions[7] = new AugmentedImageNode(this, R.layout.bobross);
+      linearLayoutOptions[8] = new AugmentedImageNode(this, R.layout.ribbonbanner);
 
-    photoFab = findViewById(R.id.photo_button);
+
+      photoFab = findViewById(R.id.photo_button);
         photoFab.setOnClickListener(view -> {
             try {
                 takePhoto();
@@ -211,8 +217,8 @@ public class AugmentedImageActivity extends AppCompatActivity {
         case PAUSED:
           // When an image is in PAUSED state, but the camera is not PAUSED, it has been detected,
           // but not yet tracked.
-          String text = "Detected Image " + augmentedImage.getIndex();
-          SnackbarHelper.getInstance().showMessage(this, text);
+          /*String text = "Detected Image " + augmentedImage.getIndex();
+          SnackbarHelper.getInstance().showMessage(this, text);*/
           break;
 
         case TRACKING:

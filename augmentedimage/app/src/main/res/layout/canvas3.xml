@@ -2,12 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="250dp"
-    android:layout_height="300dp"
-    android:orientation="horizontal">
+    android:layout_height="350dp"
+    android:background="@drawable/image_view3" >
 
     <ImageView
         android:id="@+id/image_view3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srcCompat="@drawable/image_view3" />
+        android:layout_height="match_parent" />
 </LinearLayout>
