@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 <resources>
-  <string name="app_name">Augmented Images</string>
+  <string name="app_name">ARt Gallery</string>
   <string name="fit_image_to_scan">Fit image to scan</string>
   <string name="facebook_app_id">361360464565465</string>
 </resources>
