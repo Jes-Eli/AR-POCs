@@ -29,11 +29,8 @@ import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
-import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
 import com.google.ar.sceneform.ux.ArFragment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,9 +41,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import android.support.v7.app.AlertDialog;
-import android.widget.LinearLayout;
-import com.google.ar.sceneform.rendering.ViewRenderable;
-import java.util.concurrent.CompletableFuture;
 
 
 import com.google.ar.sceneform.HitTestResult;
