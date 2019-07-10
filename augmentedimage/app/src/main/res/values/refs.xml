@@ -4,4 +4,9 @@
     <drawable name="image_view3">@drawable/asundayafternoon</drawable>
     <drawable name="canvas4">@drawable/starry_night</drawable>
     <drawable name="portrait_view">@drawable/mona_lisa</drawable>
+    <drawable name="american_gothic">@drawable/american_gothic</drawable>
+    <drawable name="the_scream">@drawable/thescreamcutout_final</drawable>
+    <drawable name="pixel">@drawable/pixel</drawable>
+    <drawable name="bob_ross">@drawable/bobrosscutout_final</drawable>
+    <drawable name="banner">@drawable/ribbonbannercutout</drawable>
 </resources>

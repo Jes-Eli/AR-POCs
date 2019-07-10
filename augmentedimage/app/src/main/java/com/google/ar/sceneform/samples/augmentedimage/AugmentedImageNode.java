@@ -57,7 +57,7 @@ public class AugmentedImageNode extends AnchorNode {
                   .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
                   .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
                   .build();
-          Log.e("AugmentedImageNode", "YYEEET BOII" + canvasReference);
+          //Log.e("AugmentedImageNode", "YYEEET BOII" + canvasReference);
     }
   }
 
